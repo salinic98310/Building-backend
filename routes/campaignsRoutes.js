@@ -1,5 +1,5 @@
 const express = require('express');
-const Campaign = require('../models/Campaign');
+const Campaign = require('../models/Campaigns');
 const User = require('../models/User'); // Import the User model for populating investor data
 const router = express.Router();
 
