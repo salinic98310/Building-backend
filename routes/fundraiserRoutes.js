@@ -100,7 +100,7 @@ router.post("/submit", authenticate, upload.fields([
 });
 
 // GET: Get all fundraisers for a specific user
-router.get("/:userId", authenticate, async (req, res) => {
+router.get("/fundraiser/:userId", authenticate, async (req, res) => {
   try {
     const { userId } = req.params;
 

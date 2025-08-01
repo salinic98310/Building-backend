@@ -4,8 +4,9 @@ const cors = require('cors');
 require('dotenv').config();
 
 // Import Routes
-const authRoutes = require('./routes/authRoutes');
+const authRoutes = require('./routes/userRouter');
 const fundraiserRoutes = require('./routes/fundraiserRoutes');  // Correct import
+const adminRouter = require('./routes/adminRoutes'); // Admin dashboard routes
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -18,6 +19,8 @@ app.use(express.json()); // Parse incoming JSON requests
 app.use('/api/auth', authRoutes); // Authentication Routes
 app.use('/api/fundraiser', fundraiserRoutes); // Correct endpoint for fundraisers
 
+//admin
+app.use('/api/admin/auth',adminRouter);
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected'))
