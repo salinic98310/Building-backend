@@ -6,7 +6,7 @@ cloudinary.config({
   api_secret: process.env.API_SECRET,
 });
 
-export const uploadToCloudinary = async (file) => {
+const uploadToCloudinary = async (file) => {
   if (!file) {
     throw new Error("No file provided");
   }
@@ -23,3 +23,5 @@ export const uploadToCloudinary = async (file) => {
     throw new Error("Cloudinary upload failed");
   }
 };
+
+module.exports = { uploadToCloudinary };

@@ -60,14 +60,6 @@ const decodeToken = async (req, res, next) => {
   }
 };
 
-// Middleware to check admin or merchandise access
-const admin = (req, res, next) => {
-  const userRole = req.user?.role;
-  if (userRole === "admin" || userRole === "merchantise") {
-    next();
-  } else {
-    res.status(403).json({ message: "Not authorized as an admin" });
-  }
-};
 
-module.exports = { decodeToken, admin };
+
+module.exports = { decodeToken };
