@@ -38,7 +38,38 @@ const getFundraisers = async (req, res) => {
   }
 };
 
+const submitFundraiser = async (req, res) => {
+  try {
+    const {
+      companyName, overview, purpose, // ...other fields
+    } = req.body;
+
+    const fundraiser = {
+      companyName,
+      overview,
+      purpose,
+      // Save Cloudinary URLs
+      photo: req.files["photo"]?.[0]?.path || null,
+      video: req.files["video"]?.[0]?.path || null,
+      promoVideo: req.files["promoVideo"]?.[0]?.path || null,
+      promoPoster: req.files["promoPoster"]?.[0]?.path || null,
+      license: req.files["license"]?.[0]?.path || null,
+      kyc: req.files["kyc"]?.[0]?.path || null,
+      // Add rest of the fields...
+    };
+
+    // Save to DB...
+    const saved = await Fundraiser.create(fundraiser);
+    res.status(201).json(saved);
+  } catch (err) {
+    console.error("Submit error:", err);
+    res.status(500).json({ error: "Submission failed" });
+  }
+};
+
+
 module.exports = {
   createFundRaiser,
   getFundraisers,
+  submitFundraiser,
 };
