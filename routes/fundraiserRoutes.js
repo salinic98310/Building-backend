@@ -10,5 +10,4 @@ const fundRaiserRouter = express.Router();
 fundRaiserRouter.post("/create-fundraiser/:id", createFundRaiser);
 fundRaiserRouter.get("/fundraiser/:id", getFundraisers);
 
-
 module.exports = fundRaiserRouter;
