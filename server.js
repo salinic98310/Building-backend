@@ -8,6 +8,7 @@ const authRoutes = require("./routes/userRouter");
 const fundRaiserRouter = require("./routes/fundraiserRoutes");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const CampaignRouter = require("./routes/campaignsRoutes");
 
  
 const app = express();
@@ -24,6 +25,7 @@ app.use(cookieParser()); // Parse cookies
 // Routes
 app.use("/api/auth", authRoutes); // Authentication Routes
 app.use("/api/fundraiser", fundRaiserRouter); // Correct endpoint for fundraisers
+app.use("/api/campaigns", CampaignRouter); // Campaigns Routes
 
 // Connect to MongoDB
 mongoose

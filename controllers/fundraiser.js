@@ -1,13 +1,31 @@
 const Fundraiser = require("../models/Fundraiser");
+const { uploadToCloudinary } = require("../utils/cloudinary");
 
 const createFundRaiser = async (req, res) => {
   try {
-    const { id } = req.params; // Assuming user is set in req.user by auth middleware
-    console.log("userId", id);
+    const { id } = req.params;
     if (!id) {
       return res.status(401).json({ message: "Unauthorized" });
     }
+
     const fundraiserData = { ...req.body, userId: id };
+
+    // Map of field name to cloudinary URL
+    const imageFields = [
+      "projectImage",
+      "licenseImage",
+      "kycImage",
+      "promoPoster",
+    ];
+
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        if (imageFields.includes(file.fieldname)) {
+          const result = await uploadToCloudinary(file);
+          fundraiserData[file.fieldname] = result.secure_url;
+        }
+      }
+    }
 
     const newFundraiser = new Fundraiser(fundraiserData);
     await newFundraiser.save();
@@ -41,7 +59,9 @@ const getFundraisers = async (req, res) => {
 const submitFundraiser = async (req, res) => {
   try {
     const {
-      companyName, overview, purpose, // ...other fields
+      companyName,
+      overview,
+      purpose, // ...other fields
     } = req.body;
 
     const fundraiser = {
@@ -66,7 +86,6 @@ const submitFundraiser = async (req, res) => {
     res.status(500).json({ error: "Submission failed" });
   }
 };
-
 
 module.exports = {
   createFundRaiser,
