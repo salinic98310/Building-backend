@@ -61,5 +61,20 @@ const decodeToken = async (req, res, next) => {
 };
 
 
+const isAdmin = async (req,res,next) =>{
+  try{
+    const user = await User.findById(req.userId);
 
-module.exports = { decodeToken };
+    if(!user || user.role !== 'admin'){
+      return res.status(403).json({ message: "Access denied, admin only" });
+    }
+
+    next();
+  }catch(error){
+    console.error("Error fetching user:", error);
+    return res.status(500).json({ message: "Unauthorized" });
+  }
+}
+
+
+module.exports = { decodeToken, isAdmin };

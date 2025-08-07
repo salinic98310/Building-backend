@@ -15,6 +15,7 @@ const createFundRaiser = async (req, res) => {
       "projectImage",
       "licenseImage",
       "kycImage",
+      "panImage",
       "promoPoster",
     ];
 
@@ -75,6 +76,7 @@ const submitFundraiser = async (req, res) => {
       promoPoster: req.files["promoPoster"]?.[0]?.path || null,
       license: req.files["license"]?.[0]?.path || null,
       kyc: req.files["kyc"]?.[0]?.path || null,
+      pan: req.files["pan"]?.[0]?.path || null, // Optional, if needed
       // Add rest of the fields...
     };
 

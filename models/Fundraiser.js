@@ -10,11 +10,17 @@ const fundraiserSchema = new mongoose.Schema({
   projectLocation: {
     state: String,
     city: String,
-    pincode: String,
+    country: String,
   },
   projectImage: { type: String, required: false }, // store file URL
   projectVideo: { type: String }, // optional
 
+  investors:[{
+    title: { type: String, required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    moneyToRaise: { type: Number, required: true },
+    quantity: { type: Number, required: true }
+  }],
   // Step 2: Funding
   moneyToRaise: { type: Number, required: true },
   daysToRaise: { type: Number, required: true },
@@ -25,6 +31,8 @@ const fundraiserSchema = new mongoose.Schema({
   introduction: { type: String, required: true },
   licenseImage: { type: String, required: false },
   kycImage: { type: String, required: false },
+  panImage: { type: String, required: false },
+
 
   // Step 4: Bank
   bankDetails: {

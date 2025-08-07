@@ -2,13 +2,14 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
-const { decodeToken } = require("./middleware/authmiddleware"); // Assuming you have an auth middleware for protection
+const { decodeToken, isAdmin } = require("./middleware/authmiddleware"); // Assuming you have an auth middleware for protection
 // Import Routes
 const authRoutes = require("./routes/userRouter");
 const fundRaiserRouter = require("./routes/fundraiserRoutes");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const CampaignRouter = require("./routes/campaignsRoutes");
+const adminRouter = require("./routes/adminRoutes");
 
  
 const app = express();
@@ -26,6 +27,7 @@ app.use(cookieParser()); // Parse cookies
 app.use("/api/auth", authRoutes); // Authentication Routes
 app.use("/api/fundraiser", fundRaiserRouter); // Correct endpoint for fundraisers
 app.use("/api/campaigns", CampaignRouter); // Campaigns Routes
+app.use("/api/admin", isAdmin , adminRouter); // Admin Routes
 
 // Connect to MongoDB
 mongoose

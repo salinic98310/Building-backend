@@ -11,6 +11,7 @@ const getAllCampaigns = async (req, res) => {
   }
 };
 
+
 module.exports = {
   getAllCampaigns,
 };
