@@ -3,7 +3,7 @@ const User = require("../models/userSchema");
 
 // Helper: Create JWT token
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "40h" });
+  return jwt.sign({ id }, process.env.JWT_SECRET || "default_secret", { expiresIn: "40h" });
 };
 
 // @desc    Register new user

@@ -4,6 +4,6 @@ const { decodeToken , isAdmin } = require('../middleware/authmiddleware.js');
 
 const router = express.Router();
 
-router.get('/dashboard', decodeToken, isAdmin, AdminDashboard);
+router.get('/dashboard', decodeToken, AdminDashboard);
 
 module.exports = router;

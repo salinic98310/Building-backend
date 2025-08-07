@@ -89,8 +89,28 @@ const submitFundraiser = async (req, res) => {
   }
 };
 
+const testCoundinary = async (req, res) => {
+  try {
+    const images = req.files.image; // this is an array of files
+    if (!images || images.length === 0) {
+      return res.status(400).json({ message: "No images uploaded" });
+    }
+
+    const result = await uploadToCloudinary(images[0]); // test one image
+    res
+      .status(200)
+      .json({ message: "Upload successful", url: result.secure_url });
+  } catch (error) {
+    console.error("Cloudinary test failed:", error);
+    res
+      .status(500)
+      .json({ message: "Cloudinary test failed", error: error.message });
+  }
+};
+
 module.exports = {
   createFundRaiser,
   getFundraisers,
   submitFundraiser,
+  testCoundinary,
 };

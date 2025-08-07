@@ -1,27 +1,22 @@
 const cloudinary = require("cloudinary").v2;
+const fs = require("fs");
 
 cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "dhieheffr",
+  api_key: process.env.CLOUDINARY_API_KEY || "493932859667533",
+  api_secret:
+    process.env.CLOUDINARY_API_SECRET || "3Ys0Ez0iqMnhta4ntMX-IOx2Cmc",
 });
 
 const uploadToCloudinary = async (file) => {
-  if (!file) {
-    throw new Error("No file provided");
-  }
-  if (!cloud_name || !api_key || !api_secret) {
-    throw new Error("Cloudinary configuration is missing");
-  }
-  try {
-    const result = await cloudinary.uploader.upload(file.path, {
-      folder: "fundraisers",
+  console.log("process.env.CLOUDINARY_API_KEY", process.env.CLOUDINARY_API_KEY);
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload(file.path, (err, result) => {
+      fs.unlinkSync(file.path); // remove local file after upload
+      if (err) return reject(err);
+      resolve(result);
     });
-    return result;
-  } catch (error) {
-    console.error("Error uploading to Cloudinary:", error);
-    throw new Error("Cloudinary upload failed");
-  }
+  });
 };
 
 module.exports = { uploadToCloudinary };

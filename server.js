@@ -10,8 +10,11 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const CampaignRouter = require("./routes/campaignsRoutes");
 const adminRouter = require("./routes/adminRoutes");
+const multer = require("multer");
+const { testCoundinary } = require("./controllers/fundraiser");
+const storage = multer.diskStorage({});
+const upload = multer({ storage });
 
- 
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -20,14 +23,18 @@ app.use(cors());
 app.use(express.json()); // Parse incoming JSON requests
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(bodyParser.json()); // Parse JSON bodies
-app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(cookieParser()); // Parse cookies
 
 // Routes
 app.use("/api/auth", authRoutes); // Authentication Routes
 app.use("/api/fundraiser", fundRaiserRouter); // Correct endpoint for fundraisers
 app.use("/api/campaigns", CampaignRouter); // Campaigns Routes
-app.use("/api/admin", isAdmin , adminRouter); // Admin Routes
+app.use("/api/admin", decodeToken, isAdmin, adminRouter); // Admin Routes
+app.post(
+  "/api/cloudinary",
+  upload.fields([{ name: "image", maxCount: 10 }]),
+  testCoundinary
+);
 
 // Connect to MongoDB
 mongoose

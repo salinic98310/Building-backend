@@ -4,7 +4,6 @@ const User = require("../models/userSchema.js");
 // Middleware to protect routes (requires valid JWT token)
 const decodeToken = async (req, res, next) => {
   let token;
-  console.log('token', token)
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer ")
@@ -22,7 +21,10 @@ const decodeToken = async (req, res, next) => {
       }
 
       // Decode token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET || "default_secret"
+      );
 
       // Extract user ID from token (handle both possible structures)
       const userId = decoded?.user?.id || decoded?.id;
@@ -39,6 +41,7 @@ const decodeToken = async (req, res, next) => {
       }
 
       req.user = user;
+
       next();
     } catch (error) {
       console.error("Token verification failed:", error);
@@ -60,21 +63,26 @@ const decodeToken = async (req, res, next) => {
   }
 };
 
+const isAdmin = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
 
-const isAdmin = async (req,res,next) =>{
-  try{
-    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    if(!user || user.role !== 'admin'){
+    console.log("Fetched User Document:", user); // Optional: for debugging
+
+    if (user.role !== "admin") {
       return res.status(403).json({ message: "Access denied, admin only" });
     }
 
+    // User is admin
     next();
-  }catch(error){
-    console.error("Error fetching user:", error);
-    return res.status(500).json({ message: "Unauthorized" });
+  } catch (error) {
+    console.error("Error verifying admin:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
-}
-
+};
 
 module.exports = { decodeToken, isAdmin };
