@@ -24,7 +24,7 @@ const fundraiserSchema = new mongoose.Schema({
   // Step 2: Funding
   moneyToRaise: { type: Number, required: true },
   daysToRaise: { type: Number, required: true },
-  fundingType: { type: String, enum: ["Profit Return", "Non-Profit Return"], required: true },
+  fundingType: { type: String, enum: ["Profit Return", "Non-Profit Return"], required: false },
   profitPercentage: { type: Number }, // only if Profit Return
 
   // Step 3: Legal

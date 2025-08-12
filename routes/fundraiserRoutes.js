@@ -18,10 +18,11 @@ fundRaiserRouter.post(
     { name: "promoPoster", maxCount: 1 },
     { name: "license", maxCount: 1 },
     { name: "kyc", maxCount: 1 },
-    { name: "pan", maxCount: 1 }
-  ]), // Accepts up to 10 images
+    { name: "pan", maxCount: 1 },
+  ]),
   createFundRaiser
 );
+
 fundRaiserRouter.get("/fundraiser/:id", getFundraisers);
 
 module.exports = fundRaiserRouter;

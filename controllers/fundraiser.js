@@ -8,27 +8,7 @@ const createFundRaiser = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const fundraiserData = { ...req.body, userId:  id };
-
-     const {
-      projectTitle,
-      projectCategory,
-      projectOverview,
-      state,
-      city,
-      country,
-      moneyToRaise,
-      daysToRaise,
-      fundingType,
-      introduction,
-      bankName,
-      bankBranch,
-      accountHolder,
-      accountNumber,
-      ifscCode,
-      promoteCampaign,
-      promotion
-    } = req.body;
+    const fundraiserData = { ...req.body, userId: id };
 
     const fileFields = [
       "photo",
@@ -40,18 +20,19 @@ const createFundRaiser = async (req, res) => {
       "pan",
     ];
 
-    // Upload each file to Cloudinary if it exists
-    for (const field of fileFields) {
-      if (req.file?.[field]?.[0]) {
-        const uploaded = await uploadToCloudinary(req.file[field][0]);
-        fundraiserData[field] = uploaded.secure_url;
-        console.log(uploaded);
-      }
-    }
+    // Upload all files in parallel
+    await Promise.all(
+      fileFields.map(async (field) => {
+        if (req.files?.[field]?.[0]) {
+          const uploaded = await uploadToCloudinary(req.files[field][0]);
+          fundraiserData[field] = uploaded.secure_url;
+        }else{
+          console.log('No file uploaded for field:', field);
+        }
+      })
+    );
 
-    // Save once to DB
     const newFundraiser = await Fundraiser.create(fundraiserData);
-    
 
     res.status(201).json({
       message: "Fundraiser created successfully",
