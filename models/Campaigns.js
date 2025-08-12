@@ -19,6 +19,7 @@ const campaignSchema = new mongoose.Schema({
   goalAmount: { type: Number, required: true },
   raisedAmount: { type: Number, default: 0 },
   description: { type: String },
+  imageUrl: {type: String},
   companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },  // Refers to the company that created the campaign
   investors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // List of investors
 });

@@ -14,7 +14,7 @@ const fundraiserSchema = new mongoose.Schema({
   },
   photo: { type: String, required: false }, // store file URL
   video: { type: String }, // optional
-
+  imageUrl: {type:String},
   investors:[{
     title: { type: String, required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },

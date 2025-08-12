@@ -8,7 +8,7 @@ const createFundRaiser = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const fundraiserData = { ...req.body, userId: id };
+    const fundraiserData = { ...req.body, userId:  id };
 
      const {
       projectTitle,
@@ -30,74 +30,28 @@ const createFundRaiser = async (req, res) => {
       promotion
     } = req.body;
 
-    // Upload files to Cloudinary
-    const photoUrl = req.files?.photo
-      ? (await uploadToCloudinary(req.files.photo[0])).secure_url
-      : null;
+    const fileFields = [
+      "photo",
+      "video",
+      "promoVideo",
+      "promoPoster",
+      "license",
+      "kyc",
+      "pan",
+    ];
 
-    const videoUrl = req.files?.video
-      ? (await uploadToCloudinary(req.files.video[0])).secure_url
-      : null;
-
-    const promoVideoUrl = req.files?.promoVideo
-      ? (await uploadToCloudinary(req.files.promoVideo[0])).secure_url
-      : null;
-
-    const promoPosterUrl = req.files?.promoPoster
-      ? (await uploadToCloudinary(req.files.promoPoster[0])).secure_url
-      : null;
-
-    const licenseUrl = req.files?.license
-      ? (await uploadToCloudinary(req.files.license[0])).secure_url
-      : null;
-
-    const kycUrl = req.files?.kyc
-      ? (await uploadToCloudinary(req.files.kyc[0])).secure_url
-      : null;
-
-    const panUrl = req.files?.pan
-      ? (await uploadToCloudinary(req.files.pan[0])).secure_url
-      : null;
-
-    // Create new fundraiser in DB
-    const fundraiser = await Fundraiser.create({
-      projectTitle,
-      projectCategory,
-      projectOverview,
-      state,
-      city,
-      country,
-      photo: photoUrl,
-      video: videoUrl,
-      promoVideo: promoVideoUrl,
-      promoPoster: promoPosterUrl,
-      moneyToRaise,
-      daysToRaise,
-      fundingType,
-      introduction,
-      license: licenseUrl,
-      kyc: kycUrl,
-      pan: panUrl,
-      bankName,
-      bankBranch,
-      accountHolder,
-      accountNumber,
-      ifscCode,
-      promoteCampaign,
-      promotion
-    });
-
-    if (req.files && req.files.length > 0) {
-      for (const file of req.files) {
-        if (imageFields.includes(file.fieldname)) {
-          const result = await uploadToCloudinary(file);
-          fundraiserData[file.fieldname] = result.secure_url;
-        }
+    // Upload each file to Cloudinary if it exists
+    for (const field of fileFields) {
+      if (req.file?.[field]?.[0]) {
+        const uploaded = await uploadToCloudinary(req.file[field][0]);
+        fundraiserData[field] = uploaded.secure_url;
+        console.log(uploaded);
       }
     }
 
-    const newFundraiser = new Fundraiser(fundraiserData);
-    await newFundraiser.save();
+    // Save once to DB
+    const newFundraiser = await Fundraiser.create(fundraiserData);
+    
 
     res.status(201).json({
       message: "Fundraiser created successfully",
@@ -127,6 +81,11 @@ const getFundraisers = async (req, res) => {
 
 const submitFundraiser = async (req, res) => {
   try {
+    const { id } = req.params; // or req.user.id from auth middleware
+    if (!id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
     const {
       companyName,
       overview,
@@ -146,41 +105,51 @@ const submitFundraiser = async (req, res) => {
       accountNumber,
       ifscCode,
       promoteCampaign,
-
-      // ...other fields
     } = req.body;
 
     const fundraiser = {
+      userId: id,
       companyName,
-  overview,
-  purpose,
-  state,          // ✅ include
-  country,        // ✅ include
-  city,           // ✅ include
-  projectCategory,
-  projectTitle,
-  moneyToRaise,
-  daysToRaise,
-  fundingType,
-  profitPercentage,
-  bankDetails,
-  bankName,
-  accountHolderName,
-  accountNumber,
-  ifscCode,
-  promoteCampaign,
-      // Save Cloudinary URLs
-      photo: req.files["photo"]?.[0]?.path || null,
-      video: req.files["video"]?.[0]?.path || null,
-      promoVideo: req.files["promoVideo"]?.[0]?.path || null,
-      promoPoster: req.files["promoPoster"]?.[0]?.path || null,
-      license: req.files["license"]?.[0]?.path || null,
-      kyc: req.files["kyc"]?.[0]?.path || null,
-      pan: req.files["pan"]?.[0]?.path || null, // Optional, if needed
-      // Add rest of the fields...
+      overview,
+      purpose,
+      state,
+      country,
+      city,
+      projectCategory,
+      projectTitle,
+      moneyToRaise,
+      daysToRaise,
+      fundingType,
+      profitPercentage,
+      bankDetails,
+      bankName,
+      accountHolderName,
+      accountNumber,
+      ifscCode,
+      promoteCampaign,
+      photo: req.file["photo"]
+        ? (await uploadToCloudinary(req.file["photo"][0])).secure_url
+        : null,
+      video: req.file["video"]
+        ? (await uploadToCloudinary(req.file["video"][0])).secure_url
+        : null,
+      promoVideo: req.file["promoVideo"]
+        ? (await uploadToCloudinary(req.file["promoVideo"][0])).secure_url
+        : null,
+      promoPoster: req.file["promoPoster"]
+        ? (await uploadToCloudinary(req.file["promoPoster"][0])).secure_url
+        : null,
+      license: req.file["license"]
+        ? (await uploadToCloudinary(req.file["license"][0])).secure_url
+        : null,
+      kyc: req.file["kyc"]
+        ? (await uploadToCloudinary(req.file["kyc"][0])).secure_url
+        : null,
+      pan: req.file["pan"]
+        ? (await uploadToCloudinary(req.file["pan"][0])).secure_url
+        : null,
     };
 
-    // Save to DB...
     const saved = await Fundraiser.create(fundraiser);
     res.status(201).json(saved);
   } catch (err) {
@@ -189,9 +158,9 @@ const submitFundraiser = async (req, res) => {
   }
 };
 
-const testCoundinary = async (req, res) => {
+const testCloudinary = async (req, res) => {
   try {
-    const images = req.files.image; // this is an array of files
+    const images = req.file.image; // this is an array of file
     if (!images || images.length === 0) {
       return res.status(400).json({ message: "No images uploaded" });
     }
@@ -212,5 +181,5 @@ module.exports = {
   createFundRaiser,
   getFundraisers,
   submitFundraiser,
-  testCoundinary,
+  testCloudinary,
 };

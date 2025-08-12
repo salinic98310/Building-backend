@@ -11,7 +11,7 @@ const cookieParser = require("cookie-parser");
 const CampaignRouter = require("./routes/campaignsRoutes");
 const adminRouter = require("./routes/adminRoutes");
 const multer = require("multer");
-const { testCoundinary } = require("./controllers/fundraiser");
+const { testCloudinary } = require("./controllers/fundraiser");
 const storage = multer.diskStorage({});
 const upload = multer({ storage });
 
@@ -41,7 +41,7 @@ app.post(
     {name:"kyc", maxCount: 1},
     {name:"pan", maxCount: 1}
   ]),
-  testCoundinary
+  testCloudinary
 );
 
 // Connect to MongoDB
