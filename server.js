@@ -32,7 +32,15 @@ app.use("/api/campaigns", CampaignRouter); // Campaigns Routes
 app.use("/api/admin", decodeToken, isAdmin, adminRouter); // Admin Routes
 app.post(
   "/api/cloudinary",
-  upload.fields([{ name: "image", maxCount: 10 }]),
+  upload.fields([
+    {name:"photo", maxCount: 1},
+    {name:"video", maxCount: 1},
+    {name:"promoVideo", maxCount: 1},
+    {name:"promoPoster", maxCount: 1},
+    {name:"license", maxCount: 1},
+    {name:"kyc", maxCount: 1},
+    {name:"pan", maxCount: 1}
+  ]),
   testCoundinary
 );
 

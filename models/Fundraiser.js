@@ -8,12 +8,12 @@ const fundraiserSchema = new mongoose.Schema({
   projectOverview: { type: String, required: true },
   projectCategory: { type: String, enum: ["Business", "Startup", "Company Growth"], required: true },
   projectLocation: {
-    state: String,
-    city: String,
-    country: String,
+    state: { type: String },
+    city: { type: String },
+    country: { type: String },
   },
-  projectImage: { type: String, required: false }, // store file URL
-  projectVideo: { type: String }, // optional
+  photo: { type: String, required: false }, // store file URL
+  video: { type: String }, // optional
 
   investors:[{
     title: { type: String, required: true },
@@ -29,9 +29,9 @@ const fundraiserSchema = new mongoose.Schema({
 
   // Step 3: Legal
   introduction: { type: String, required: true },
-  licenseImage: { type: String, required: false },
-  kycImage: { type: String, required: false },
-  panImage: { type: String, required: false },
+  license: { type: String, required: false },
+  kyc: { type: String, required: false },
+  pan: { type: String, required: false },
 
 
   // Step 4: Bank

@@ -11,7 +11,15 @@ const fundRaiserRouter = express.Router();
 
 fundRaiserRouter.post(
   "/create-fundraiser/:id",
-  upload.array("image", 10), // Accepts up to 10 images
+  upload.fields([
+    { name: "photo", maxCount: 1 },
+    { name: "video", maxCount: 1 },
+    { name: "promoVideo", maxCount: 1 },
+    { name: "promoPoster", maxCount: 1 },
+    { name: "license", maxCount: 1 },
+    { name: "kyc", maxCount: 1 },
+    { name: "pan", maxCount: 1 }
+  ]), // Accepts up to 10 images
   createFundRaiser
 );
 fundRaiserRouter.get("/fundraiser/:id", getFundraisers);

@@ -10,14 +10,82 @@ const createFundRaiser = async (req, res) => {
 
     const fundraiserData = { ...req.body, userId: id };
 
-    // Map of field name to cloudinary URL
-    const imageFields = [
-      "projectImage",
-      "licenseImage",
-      "kycImage",
-      "panImage",
-      "promoPoster",
-    ];
+     const {
+      projectTitle,
+      projectCategory,
+      projectOverview,
+      state,
+      city,
+      country,
+      moneyToRaise,
+      daysToRaise,
+      fundingType,
+      introduction,
+      bankName,
+      bankBranch,
+      accountHolder,
+      accountNumber,
+      ifscCode,
+      promoteCampaign,
+      promotion
+    } = req.body;
+
+    // Upload files to Cloudinary
+    const photoUrl = req.files?.photo
+      ? (await uploadToCloudinary(req.files.photo[0])).secure_url
+      : null;
+
+    const videoUrl = req.files?.video
+      ? (await uploadToCloudinary(req.files.video[0])).secure_url
+      : null;
+
+    const promoVideoUrl = req.files?.promoVideo
+      ? (await uploadToCloudinary(req.files.promoVideo[0])).secure_url
+      : null;
+
+    const promoPosterUrl = req.files?.promoPoster
+      ? (await uploadToCloudinary(req.files.promoPoster[0])).secure_url
+      : null;
+
+    const licenseUrl = req.files?.license
+      ? (await uploadToCloudinary(req.files.license[0])).secure_url
+      : null;
+
+    const kycUrl = req.files?.kyc
+      ? (await uploadToCloudinary(req.files.kyc[0])).secure_url
+      : null;
+
+    const panUrl = req.files?.pan
+      ? (await uploadToCloudinary(req.files.pan[0])).secure_url
+      : null;
+
+    // Create new fundraiser in DB
+    const fundraiser = await Fundraiser.create({
+      projectTitle,
+      projectCategory,
+      projectOverview,
+      state,
+      city,
+      country,
+      photo: photoUrl,
+      video: videoUrl,
+      promoVideo: promoVideoUrl,
+      promoPoster: promoPosterUrl,
+      moneyToRaise,
+      daysToRaise,
+      fundingType,
+      introduction,
+      license: licenseUrl,
+      kyc: kycUrl,
+      pan: panUrl,
+      bankName,
+      bankBranch,
+      accountHolder,
+      accountNumber,
+      ifscCode,
+      promoteCampaign,
+      promotion
+    });
 
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
@@ -62,13 +130,45 @@ const submitFundraiser = async (req, res) => {
     const {
       companyName,
       overview,
-      purpose, // ...other fields
+      purpose,
+      projectCategory,
+      projectTitle,
+      state,
+      country,
+      city,
+      moneyToRaise,
+      daysToRaise,
+      fundingType,
+      profitPercentage,
+      bankDetails,
+      bankName,
+      accountHolderName,
+      accountNumber,
+      ifscCode,
+      promoteCampaign,
+
+      // ...other fields
     } = req.body;
 
     const fundraiser = {
       companyName,
-      overview,
-      purpose,
+  overview,
+  purpose,
+  state,          // ✅ include
+  country,        // ✅ include
+  city,           // ✅ include
+  projectCategory,
+  projectTitle,
+  moneyToRaise,
+  daysToRaise,
+  fundingType,
+  profitPercentage,
+  bankDetails,
+  bankName,
+  accountHolderName,
+  accountNumber,
+  ifscCode,
+  promoteCampaign,
       // Save Cloudinary URLs
       photo: req.files["photo"]?.[0]?.path || null,
       video: req.files["video"]?.[0]?.path || null,
